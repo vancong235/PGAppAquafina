@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "18862796113",
+    "project_id": "pgappaquafina",
+    "storage_bucket": "pgappaquafina.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:18862796113:android:c9a07732455f56bc6fb770",
+        "android_client_info": {
+          "package_name": "com.pgappaquafina"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "18862796113-k8llvmlcecgh9gtoera6r46qk6s2pm3d.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.pgappaquafina",
+            "certificate_hash": "db8eacb962d30f671975e63e03d23011b129b36f"
+          }
+        },
+        {
+          "client_id": "18862796113-97rv5gtplco6lkbed0epp8489tflk475.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD7LSWATp0Di2dis2QYIYc1d1cdeEQTWLI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "18862796113-97rv5gtplco6lkbed0epp8489tflk475.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

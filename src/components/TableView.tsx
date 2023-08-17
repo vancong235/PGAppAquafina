@@ -1,5 +1,8 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, Dimensions, TouchableOpacity } from 'react-native';
+import {AppDispatch, RootState} from '../app/store';
+import {Action, ThunkDispatch} from '@reduxjs/toolkit';
+import {useDispatch, useSelector} from 'react-redux';
 
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
@@ -11,13 +14,26 @@ interface Item {
   other: string;
 }
 
-const ITEMS_PER_PAGE = 4; // Số hàng hiển thị trên mỗi trang
+const ITEMS_PER_PAGE = 5; // Số hàng hiển thị trên mỗi trang
 const PAGINATION_WIDTH = windowWidth * 0.95; // Độ rộng của phần chứa nút chuyển trang
 
 const YourComponent: React.FC = () => {
+  const records = useSelector((state: RootState) => state.user.records);
+  useEffect(() => {
+    // Chuyển đổi dữ liệu từ `records` thành `data` và cập nhật state `data`
+    const transformedData = records.map((record) => ({
+      time: record.ThoiGianString,
+      quantity: record.SoLuong,
+      aquaBottles: record.Aqua,
+      other: record.Khac,
+    }));
+    setData(transformedData);
+  }, [records]);
+  console.log(records);
   const [data, setData] = useState<Item[]>([
-    // Thêm các dòng dữ liệu khác tương tự ở đây
-    
+    { time: "2023-08-01", quantity: 10, aquaBottles: 5, other: "Lorem"},
+    { time: "2023-08-02", quantity: 15, aquaBottles: 8, other: "0 2" },
+    { time: "2023-08-03", quantity: 12, aquaBottles: 3, other: "0 3" },
   ]);
   const [page, setPage] = useState<number>(1);
 
@@ -142,19 +158,17 @@ const styles = StyleSheet.create({
   },
   rowContainer: {
     flexDirection: 'row',
-    marginBottom: 24,
-    marginTop: 24,
+    marginBottom: 18,
+    marginTop: 18,
   },
   cell1: {
-
     color: '#00358C',
-    width: windowWidth * 0.95 * 0.20,
+    width: windowWidth * 0.95 * 0.23,
     position: 'absolute',
     textAlign: 'center',
-    right: 90
+    right: 85
   },
   cell2: {
-
     color: '#00358C',
     width: windowWidth * 0.95 * 0.17,
     position: 'absolute',
@@ -162,7 +176,6 @@ const styles = StyleSheet.create({
     right: 17
   },
   cell3: {
-
     color: '#00358C',
     width: windowWidth * 0.95 * 0.17,
     position: 'absolute',
@@ -170,7 +183,6 @@ const styles = StyleSheet.create({
     right: -71
   },
   cell4: {
-
     color: '#00358C',
     width: windowWidth * 0.95 * 0.17,
     position: 'absolute',

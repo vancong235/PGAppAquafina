@@ -1,4 +1,4 @@
-import React, { FC, useState, useCallback } from 'react';
+import React, { FC, useState, useCallback, useEffect } from 'react';
 import { Alert, StyleSheet, Text, TextInput, TouchableOpacity, View, ImageBackground, Button, Dimensions  } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import Title from '../components/Title';
@@ -22,12 +22,33 @@ type PointScreenProps = {
 
 const Point: React.FC<PointScreenProps> = ({navigation, route}) => {
 
-  const handleReport = () => {
-    navigation.replace('Report');
+  const [timeLeft, setTimeLeft] = useState(15);
+
+  useEffect(() => {
+    // Tạo interval để giảm thời gian còn lại mỗi giây
+    const timer = setInterval(() => {
+      setTimeLeft((prevTime) => {
+        if (prevTime === 0) {
+          // Thực hiện hành động khi thời gian đếm ngược đạt đến 0
+          // Ví dụ: Hiển thị thông báo, thực hiện hành động khác, vv.
+          console.log('Đã đếm ngược tới 0');
+        }
+        return prevTime > 0 ? prevTime - 1 : prevTime;
+      });
+    }, 1000);
+  
+    // Xóa interval khi component bị unmount
+    return () => {
+      clearInterval(timer);
+    };
+  }, []);
+
+  const handleAddTime = () => {
+    navigation.replace('Point');
   };
 
-  const handleQuantity = () => {
-    navigation.replace('Point');
+  const handleEnd = () => {
+    navigation.replace('Home');
   };
 
   const [isFocusedButton1, setIsFocusedButton1] = useState(false);
@@ -70,10 +91,10 @@ const Point: React.FC<PointScreenProps> = ({navigation, route}) => {
               </ImageBackground>
             <Text style={styles.q2}> Thời gian quét QR còn: 
             
-              <Text style={styles.TextChange}> 15s</Text>
+              <Text style={styles.TextChange}> {timeLeft}s</Text>
             </Text>
             <TouchableOpacity
-              onPress={handleQuantity}
+              onPress={handleAddTime}
               style={styles.containTime}>
               <ImageBackground
                     source={require('../../assets/Point/ttg.png')} // Đường dẫn tới hình ảnh button 1
@@ -83,7 +104,7 @@ const Point: React.FC<PointScreenProps> = ({navigation, route}) => {
             </TouchableOpacity>
 
             <TouchableOpacity
-              onPress={handleQuantity}
+              onPress={handleEnd}
               style={styles.containConfirm}>
               <ImageBackground
                     source={require('../../assets/Point/kt.png')} // Đường dẫn tới hình ảnh button 1
@@ -91,25 +112,6 @@ const Point: React.FC<PointScreenProps> = ({navigation, route}) => {
                     resizeMode="cover">
               </ImageBackground>
             </TouchableOpacity>
-          {/* <View style={styles.imageHeader}>
-            <ImageBackground source={require('../../assets/Point/Logo.png')} style={styles.imageHeaderLogoContent}>
-            </ImageBackground>
-            <Text style={styles.imageHeaderTextContent}>Unknow</Text>
-            <ImageBackground source={require('../../assets/Point/F625.png')} style={styles.imageHeaderImageContent}>
-            </ImageBackground>
-          </View>
-          <ImageBackground source={require('../../assets/Point/G142.png')} style={styles.imageBody}>
-          </ImageBackground>
-          <Text style={styles.imageBodyTextContent1}>QUÉT MÃ QR</Text>
-          <Text style={styles.imageBodyTextContent2}>Vui lòng quét mã trên thùng để {'\n'}sử dụng hệ thống</Text>
-          <TouchableOpacity onPress={handlePress2}>
-            <ImageBackground source={require('../../assets/Point/b1.png')} style={styles.imageButton1}>
-            </ImageBackground>
-          </TouchableOpacity>
-          <TouchableOpacity>
-          <ImageBackground source={require('../../assets/Point/b2.png')} style={styles.imageButton2}>
-          </ImageBackground>
-          </TouchableOpacity> */}
       </ImageBackground>
   );
 };

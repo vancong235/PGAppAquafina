@@ -2,11 +2,19 @@ import React, { FC, useState, useCallback, useEffect } from 'react';
 import { Alert, StyleSheet, Text, TouchableOpacity, View, ImageBackground, Button, Dimensions  } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import firestore from '@react-native-firebase/firestore';
+import Title from '../components/Title';
+import { fetchUser, getRecord, addRecord } from '../features/user/userSlice'
+import {useDispatch, useSelector} from 'react-redux';
+import {AppDispatch, RootState} from '../app/store';
+import {Action, ThunkDispatch} from '@reduxjs/toolkit';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
 
 interface HomeProps {
+  
   // props nếu có
 }
 
@@ -19,40 +27,41 @@ type HomeScreenProps = {
   route: any;
 };
 
-const getInformation = async () => {
-  const querySnapshot = await firestore().collection('Users').get();
-  const ids = querySnapshot.docs.map((doc) => doc.id);
-  return ids;
-};
 
 const Home: React.FC<HomeScreenProps> = ({navigation, route}) => {
   useEffect(() => {
-    getInformation();
+    if (userData!=null) {
+      setImageSource(require('../../assets/Home/b3.png'));
+    }
   }, []);
-  const handlePress2 = () => {
-    // Code to execute when the second TouchableOpacity is pressed
-    navigation.replace('Quantity');
+  
+  const userData = useSelector((state: RootState) => state.user.userData);
+  const [imageSource, setImageSource] = useState(require('../../assets/Home/b2.png'));
+  
+  const handlePressQrcode = () => {
+    navigation.replace('Qrcode');
   };
+
+  const handlePressPass = () => {
+    if (userData!=null) {
+      navigation.replace('Quantity');
+    }
+  };
+
   return (
       <ImageBackground source={require('../../assets/Home/bg.png')} style={styles.imageBackground}>
-          <View style={styles.imageHeader}>
-            <ImageBackground source={require('../../assets/Home/Logo.png')} style={styles.imageHeaderLogoContent}>
-            </ImageBackground>
-            <Text style={styles.imageHeaderTextContent}>Unknow</Text>
-            <ImageBackground source={require('../../assets/Home/F625.png')} style={styles.imageHeaderImageContent}>
-            </ImageBackground>
-          </View>
+          <Title></Title>
           <ImageBackground source={require('../../assets/Home/G142.png')} style={styles.imageBody}>
           </ImageBackground>
           <Text style={styles.imageBodyTextContent1}>QUÉT MÃ QR</Text>
           <Text style={styles.imageBodyTextContent2}>Vui lòng quét mã trên thùng để {'\n'}sử dụng hệ thống</Text>
-          <TouchableOpacity onPress={handlePress2}>
+          <TouchableOpacity onPress={handlePressQrcode}>
             <ImageBackground source={require('../../assets/Home/b1.png')} style={styles.imageButton1}>
             </ImageBackground>
           </TouchableOpacity>
-          <TouchableOpacity>
-          <ImageBackground source={require('../../assets/Home/b2.png')} style={styles.imageButton2}>
-          </ImageBackground>
+          <TouchableOpacity onPress={handlePressPass}>
+            <ImageBackground source={imageSource} style={styles.imageButton2}>
+            </ImageBackground>
           </TouchableOpacity>
       </ImageBackground>
   );

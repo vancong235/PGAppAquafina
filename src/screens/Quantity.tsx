@@ -2,6 +2,12 @@ import React, { FC, useState, useCallback } from 'react';
 import { Alert, StyleSheet, Text, TextInput, TouchableOpacity, View, ImageBackground, Button, Dimensions  } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import Title from '../components/Title';
+import firestore from '@react-native-firebase/firestore';
+import { fetchUser, getRecord, addRecord } from '../features/user/userSlice'
+import {useDispatch, useSelector} from 'react-redux';
+import {AppDispatch, RootState} from '../app/store';
+import {Action, ThunkDispatch} from '@reduxjs/toolkit';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
 const windowWidth = Dimensions.get('window').width;
@@ -19,15 +25,45 @@ type QuantityScreenProps = {
   navigation: any;
   route: any;
 };
-
 const Quantity: React.FC<QuantityScreenProps> = ({navigation, route}) => {
+  const dispatch = useDispatch<ThunkDispatch<RootState, any, Action>>();
+  const name = useSelector((state: RootState) => state.user.dataName);
+  const userData = useSelector((state: RootState) => state.user.userData);
+  const handleAddRecord = async (record: any) => {
+    await dispatch(addRecord(record));
+  };
+  const handleGetRecord = async (userId: string) => {
+    await dispatch(getRecord(userId));
+  };
+
+  const handleFetchUser = async (userId: string) => {
+    await dispatch(fetchUser(userId));
+  };
+  const [inputValue1, setInputValue1] = useState('');
+  const [inputValue2, setInputValue2] = useState('');
+  const handleQuantity = () => {
+    const newRecord = {
+      Aqua: parseInt(inputValue1),
+      Khac: parseInt(inputValue2),
+      Name: name,
+      SoLuong: parseInt(inputValue1) + parseInt(inputValue2),
+      ThoiGian: new Date(),
+    };
+
+    if (inputValue1 === '' || inputValue2 === '' || parseInt(inputValue1) < 0 || parseInt(inputValue2) < 0) {
+      // Xử lý khi Aqua và Khac là rỗng hoặc không phải là số dương
+      // Ví dụ: Hiển thị thông báo lỗi, thực hiện hành động khác, vv.
+      console.log('Aqua và Khac là rỗng hoặc không phải là số dương');
+    } else {
+      handleAddRecord(newRecord);
+      handleGetRecord(name.toString());
+      handleFetchUser(name.toString());
+      navigation.replace('Point');
+    }
+  };
 
   const handleReport = () => {
     navigation.replace('Report');
-  };
-
-  const handleQuantity = () => {
-    navigation.replace('Point');
   };
 
   const [isFocusedButton1, setIsFocusedButton1] = useState(false);
@@ -51,6 +87,21 @@ const Quantity: React.FC<QuantityScreenProps> = ({navigation, route}) => {
   const handleBlurButton2 = () => {
     setIsFocusedButton2(false);
   };
+
+
+  const handleInputChange1 = (text:any) => {
+    if (text === '' || /^[0-9]+$/.test(text)) {
+      setInputValue1(text);
+    }
+  };
+
+  const handleInputChange2 = (text:any) => {
+    if (text === '' || /^[0-9]+$/.test(text)) {
+      setInputValue2(text);
+    }
+  };
+
+
 
   const borderColorButton2 = isFocusedButton2 ? 'rgb(204,218,241)' : 'transparent';
 
@@ -80,17 +131,21 @@ const Quantity: React.FC<QuantityScreenProps> = ({navigation, route}) => {
             <Text style={styles.q1}> Vui lòng nhập số lượng chai</Text>
             <Text style={styles.q2}> Chai Aqua</Text>
             <TextInput
+              onChangeText={handleInputChange1}
+              value={inputValue1}
               style={[styles.input1, { borderColor: borderColorButton1 }]}
               onFocus={handleFocusButton1}
               onBlur={handleBlurButton1}
-              placeholder="Enter text here"
+              placeholder=""
             />
             <Text style={styles.q3}> Chai khác</Text>
             <TextInput
+              onChangeText={handleInputChange2}
+              value={inputValue2}
               style={[styles.input2, { borderColor: borderColorButton2 }]}
               onFocus={handleFocusButton2}
               onBlur={handleBlurButton2}
-              placeholder="Enter text here"
+              placeholder=""
             />
             <ImageBackground
                   source={require('../../assets/Quantity/fx.png')} // Đường dẫn tới hình ảnh button 1

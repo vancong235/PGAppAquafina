@@ -31,6 +31,7 @@ interface Record {
   SoLuong: any;
   ThoiGianString: any; // Specify the type as string array
   ThoiGian: any; // Specify the type as string array
+  Value: number;
 }
 
 export const UserSlice = createSlice({
@@ -104,7 +105,9 @@ export const fetchUser = createAsyncThunk(
 
 export const getRecord = createAsyncThunk<Record[], string>('record/getRecord', async (userQRID: string) => {
   try {
-    const querySnapshot = await firestore().collection('Records').where('Name', '==', userQRID).get();
+    const querySnapshot = await firestore().collection('Records')
+    .where('Name', '==', userQRID)
+    .get();
     if (!querySnapshot.empty) {
       const records: Record[] = querySnapshot.docs.map((doc) => {
         const recordData = doc.data() as Record;
@@ -117,6 +120,7 @@ export const getRecord = createAsyncThunk<Record[], string>('record/getRecord', 
         recordData.ThoiGianString = formattedDate;
         return recordData;
       });
+      const sortedRecords = records.sort((a, b) => a.ThoiGian.seconds - b.ThoiGian.seconds);
       return records;
     } else {
       return [];
